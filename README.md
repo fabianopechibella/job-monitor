@@ -71,10 +71,20 @@ Acesse: **Settings → Secrets and variables → Actions → New repository secr
 
 ### 3. Ativar GitHub Pages
 
-**Settings → Pages → Source: Deploy from branch → Branch: `gh-pages` / root**
+> **O branch `gh-pages` é criado automaticamente** pelo workflow na primeira execução —
+> não é necessário criá-lo manualmente.
+
+**Ordem correta:**
+
+1. Faça o push do projeto no `main`
+2. Vá em **Actions → Job Monitor → Run workflow** (disparo manual)
+3. O workflow cria o branch `gh-pages` automaticamente se ele não existir
+4. Depois da primeira execução: **Settings → Pages → Source: Deploy from branch → Branch: `gh-pages` / root**
 
 O relatório ficará disponível em:
 `https://SEU_USUARIO.github.io/job-monitor/report_latest.html`
+
+O `index.html` do `gh-pages` redireciona automaticamente para `report_latest.html`.
 
 ### 4. Testar manualmente
 
