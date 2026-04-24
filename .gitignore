@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+.venv/
+venv/
+reports/seen_jobs.json
+reports/latest_jobs.json
+reports/report_*.html
+!reports/.gitkeep
