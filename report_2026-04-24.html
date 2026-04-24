@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Monitor - Relatorio 24/04/2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing:border-box;margin:0;padding:0; }
+  body { background:#f5f6f8;color:#1a2733;font-family:Sora,sans-serif;font-size:14px;line-height:1.6; }
+  .tab-btn { padding:9px 20px;cursor:pointer;font-size:12px;font-weight:600;color:#6b7c8d;
+              border-bottom:2px solid transparent;transition:all .15s;user-select:none;
+              background:none;border-top:none;border-left:none;border-right:none;font-family:Sora,sans-serif; }
+  .tab-btn:hover { color:#1a2733; }
+  .tab-btn.active { color:#0e4d5c;border-bottom-color:#f5820d; }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+</style>
+</head>
+<body>
+
+<section style="background:#fff;border-bottom:1px solid #dde3ea;padding:44px 56px 36px;
+                display:grid;grid-template-columns:1fr 360px;gap:48px;align-items:start;">
+  <div>
+    <div style="display:inline-flex;align-items:center;gap:6px;border:1.5px solid #dde3ea;
+                border-radius:999px;padding:4px 14px;font-size:11px;font-weight:600;
+                color:#0e4d5c;letter-spacing:.04em;text-transform:uppercase;margin-bottom:20px;">
+      <span style="width:6px;height:6px;border-radius:50%;background:#f5820d;display:inline-block;"></span>
+      Job Monitor - a2malagutti - Fontes Alternativas
+    </div>
+    <h1 style="font-size:clamp(26px,3.8vw,44px);font-weight:800;color:#0d2233;
+               line-height:1.12;letter-spacing:-.03em;margin-bottom:16px;">
+      Monitoramento<br>
+      <span style="color:#1a7a8a;">automatico</span> de vagas<br>
+      Scrum Master - Agile.
+    </h1>
+    <p style="font-size:14px;color:#6b7c8d;max-width:480px;line-height:1.75;margin-bottom:28px;">
+      Coleta diaria de 0 fontes alternativas - ATS diretos, portais de nicho,
+      RSS publicos e Diario Oficial. Sem Gupy. Sem motores saturados. Gerado em 24/04/2026 as 00:58 UTC.
+    </p>
+    <div style="display:flex;flex-wrap:wrap;gap:7px;"></div>
+  </div>
+
+  <div style="background:#fff;border:1.5px solid #dde3ea;border-radius:12px;
+              padding:26px 26px 22px;box-shadow:0 4px 24px rgba(13,34,51,.07);">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+                color:#6b7c8d;margin-bottom:18px;">Resumo da coleta</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;">
+      <div style="background:#f5f6f8;border-radius:8px;padding:14px 16px;border:1px solid #dde3ea;"><div style="font-size:26px;font-weight:800;color:#0d2233;line-height:1;margin-bottom:3px;">0</div><div style="font-size:11px;color:#6b7c8d;font-weight:500;">Vagas coletadas</div></div><div style="background:#f5f6f8;border-radius:8px;padding:14px 16px;border:1px solid #dde3ea;"><div style="font-size:26px;font-weight:800;color:#0d2233;line-height:1;margin-bottom:3px;">0</div><div style="font-size:11px;color:#6b7c8d;font-weight:500;">Novas hoje</div></div><div style="background:#f5f6f8;border-radius:8px;padding:14px 16px;border:1px solid #dde3ea;"><div style="font-size:26px;font-weight:800;color:#0d2233;line-height:1;margin-bottom:3px;">0</div><div style="font-size:11px;color:#6b7c8d;font-weight:500;">Empresas unicas</div></div><div style="background:#f5f6f8;border-radius:8px;padding:14px 16px;border:1px solid #dde3ea;"><div style="font-size:26px;font-weight:800;color:#0d2233;line-height:1;margin-bottom:3px;">0</div><div style="font-size:11px;color:#6b7c8d;font-weight:500;">Fontes ativas</div></div>
+    </div>
+    <div style="margin-bottom:18px;"></div>
+    <button onclick="switchTab('Todas as Fontes', document.querySelector('[data-tab=\'Todas as Fontes\']'))"
+            style="width:100%;padding:13px;background:#f5820d;color:#fff;border:none;
+                   border-radius:8px;font-family:Sora,sans-serif;font-size:14px;
+                   font-weight:700;cursor:pointer;">
+      Ver todas as vagas
+    </button>
+    <p style="font-size:11px;color:#6b7c8d;text-align:center;margin-top:10px;line-height:1.5;">
+      <strong style="color:#1a7a8a;">NEW</strong> = vaga nao vista em execucoes anteriores
+    </p>
+  </div>
+</section>
+
+<div style="background:#fff;border-bottom:1px solid #dde3ea;display:flex;
+            position:sticky;top:0;z-index:100;overflow-x:auto;">
+  <button class="tab-btn active" data-tab="Todas as Fontes"
+          onclick="switchTab('Todas as Fontes', this)">
+    Todas (0)
+  </button>
+  
+</div>
+
+<main style="padding:32px 56px 64px;">
+  <div id="tab-Todas as Fontes" class="tab-content active">
+    <div style="margin-bottom:32px;"><div style="display:flex;align-items:center;gap:12px;padding:12px 20px;border-radius:8px 8px 0 0;background:#f0f3f6;border:1.5px solid #ccc;border-bottom:none;"><span style="font-size:15px;">🔗</span><h2 style="font-size:13px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:.05em;">Todas as Fontes</h2><span style="margin-left:auto;font-size:11px;font-family:IBM Plex Mono, monospace;color:#444;background:#f0f3f6;border:1px solid #ccc;padding:2px 9px;border-radius:4px;">0 vagas</span></div><div style="overflow-x:auto;border:1.5px solid #ccc;border-top:none;border-radius:0 0 8px 8px;box-shadow:0 2px 8px rgba(13,34,51,.05);"><table style="width:100%;border-collapse:collapse;font-size:12.5px;font-family:Sora, Segoe UI, sans-serif;"><thead><tr style="background:#f0f3f6;border-bottom:1.5px solid #dde3ea;"><th style="padding:8px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7c8d;white-space:nowrap;">#</th><th style="padding:8px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7c8d;white-space:nowrap;">Empresa</th><th style="padding:8px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7c8d;white-space:nowrap;">Cargo</th><th style="padding:8px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7c8d;white-space:nowrap;">Localização</th><th style="padding:8px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7c8d;white-space:nowrap;">Mode</th><th style="padding:8px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7c8d;white-space:nowrap;">Fonte</th><th style="padding:8px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7c8d;white-space:nowrap;">Data</th><th style="padding:8px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7c8d;white-space:nowrap;">Link</th></tr></thead><tbody><tr><td colspan="8" style="text-align:center;padding:32px;color:#6b7c8d;font-style:italic;">Nenhuma vaga encontrada nesta fonte.</td></tr></tbody></table></div></div>
+  </div>
+  
+</main>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  var el = document.getElementById('tab-' + id);
+  if (el) el.classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({ top: document.querySelector('main').offsetTop - 20, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
