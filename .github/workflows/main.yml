@@ -1,0 +1,117 @@
+name: Job Monitor — Coleta Diária
+
+on:
+  schedule:
+    - cron: "0 11 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      force_all_new:
+        description: "Marcar todas as vagas como novas (ignora histórico)"
+        required: false
+        default: "false"
+
+jobs:
+  collect-and-report:
+    name: Coletar · Gerar Relatório · Notificar
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Instalar dependências
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Restaurar seen_jobs.json do cache
+        uses: actions/cache@v4
+        with:
+          path: reports/seen_jobs.json
+          key: seen-jobs-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            seen-jobs-${{ runner.os }}-
+
+      - name: Reset histórico (se solicitado)
+        if: github.event.inputs.force_all_new == 'true'
+        run: rm -f reports/seen_jobs.json
+
+      - name: Coletar vagas (scraper.py)
+        run: python scraper.py
+        env:
+          PYTHONUNBUFFERED: "1"
+
+      - name: Gerar relatório HTML (report.py)
+        run: python report.py
+
+      - name: Enviar notificação (notify.py)
+        run: python notify.py
+        env:
+          NOTIFY_EMAIL_TO:   ${{ secrets.NOTIFY_EMAIL_TO }}
+          NOTIFY_EMAIL_FROM: ${{ secrets.NOTIFY_EMAIL_FROM }}
+          NOTIFY_SMTP_HOST:  ${{ secrets.NOTIFY_SMTP_HOST }}
+          NOTIFY_SMTP_PORT:  ${{ secrets.NOTIFY_SMTP_PORT }}
+          NOTIFY_SMTP_PASS:  ${{ secrets.NOTIFY_SMTP_PASS }}
+          REPORT_BASE_URL:   ${{ secrets.REPORT_BASE_URL }}
+
+      - name: Criar branch gh-pages se não existir
+        run: |
+          git fetch origin gh-pages 2>/dev/null || true
+          if git ls-remote --exit-code --heads origin gh-pages > /dev/null 2>&1; then
+            echo "Branch gh-pages ja existe."
+          else
+            CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+            git checkout --orphan gh-pages
+            git rm -rf . > /dev/null 2>&1 || true
+            cat > index.html << 'EOF'
+          <!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+          <meta http-equiv="refresh" content="0; url=report_latest.html">
+          <title>Job Monitor</title></head>
+          <body><script>window.location.href='report_latest.html';</script></body></html>
+          EOF
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git config user.name  "github-actions[bot]"
+            git add index.html
+            git commit -m "chore: inicializa branch gh-pages"
+            git push origin gh-pages
+            git checkout "$CURRENT_BRANCH"
+          fi
+
+      - name: Publicar relatório em GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir:  ./reports
+          publish_branch: gh-pages
+          keep_files: true
+          commit_message: "chore: relatorio ${{ github.run_id }}"
+
+      - name: Upload relatório como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: job-report-${{ github.run_number }}
+          path: |
+            reports/report_latest.html
+            reports/latest_jobs.json
+          retention-days: 30
+
+      - name: Resumo da execução
+        run: |
+          TOTAL=$(python -c "import json; d=json.load(open('reports/latest_jobs.json')); print(len(d))")
+          NEW=$(python -c "import json; d=json.load(open('reports/latest_jobs.json')); print(sum(1 for j in d if j.get('new')))")
+          echo "## Job Monitor — $(date '+%d/%m/%Y %H:%M')" >> $GITHUB_STEP_SUMMARY
+          echo "| Métrica | Valor |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| Total coletado | $TOTAL vagas |" >> $GITHUB_STEP_SUMMARY
+          echo "| Novas | $NEW vagas |" >> $GITHUB_STEP_SUMMARY
